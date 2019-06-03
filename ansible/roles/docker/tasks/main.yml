@@ -1,0 +1,77 @@
+- name: Install prerequisites
+  apt: 
+    name: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python-pip']
+    update_cache: yes
+
+- name: Install python libs
+  pip:
+    name: ['docker-compose==1.24.0', 'docker==4.0.1']
+
+- name: Add Docker GPG key
+  apt_key: 
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} edge"
+    state: present
+    update_cache: yes
+
+- name: Install Docker
+  apt: 
+    name: docker-ce
+
+- name: Installing Docker compose
+  pip:
+    name: docker-compose
+    state: present
+
+- name: Checking folders
+  file:
+    state: directory
+    path: "{{item}}"
+  with_items:
+  - ["/opt/deploy/"]
+
+- name: Copy caddy
+  copy:
+    src: files/caddy
+    dest: /etc/
+    mode: 0664
+  notify: reload caddy
+
+- name: Copynig deploy script
+  copy:
+    src: files/deploy
+    dest: /opt/
+    mode: 0775
+
+- name: Copynig scripts
+  copy:
+    src: files/scripts
+    dest: /opt/
+    mode: 0775
+
+- name: Running docker compose
+  shell: /opt/deploy/deploy.sh
+
+- name: 'Add cron task: backup database'
+  cron:
+    name: 'backup database'
+    minute: '0'
+    hour: '*/12'
+    job: /opt/scripts/db/backup.sh
+
+- name: 'Add cron task: remove old backups'
+  cron:
+    name: 'remove old backups'
+    minute: '0'
+    hour: '*/24'
+    job: find /var/backups/db/*.backup -mtime +5 -type f -delete
+
+- name: 'Add cron task: cleanup docker'
+  cron:
+    name: 'cleanup docker cron job'
+    minute: '0'
+    hour: '*/12'
+    job: docker system prune --force --volumes

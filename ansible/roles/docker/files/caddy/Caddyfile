@@ -1,0 +1,35 @@
+(static_cache) {
+	Cache-Control "max-age=86400"
+}
+
+178.79.148.211:80 {
+  tls tech@junte.it
+
+  proxy /admin/ backend:8080 {
+    transparent
+  }
+
+  proxy /static/ backend:8080 {
+    transparent
+  }
+
+  proxy /media/ backend:8080 {
+    transparent
+  }
+
+  proxy / frontend:8080 {
+    transparent
+  }
+
+  header /static {
+    import static_cache
+  }
+
+  header /media {
+    import static_cache
+  }
+
+  log stdout
+  errors stdout
+  gzip
+}

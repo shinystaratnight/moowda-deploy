@@ -1,0 +1,56 @@
+version: '3.4'
+
+services:
+  frontend:
+    restart: always
+    image: $DOCKER_FRONTEND_IMAGE
+    networks:
+      default:
+        aliases:
+        - frontend
+
+  backend:
+    restart: always
+    image: $DOCKER_BACKEND_IMAGE
+    env_file: .env
+    volumes:
+     - media_data:/var/www/run/media
+    depends_on:
+     - postgres
+    networks:
+       default:
+         aliases:
+         - backend
+
+  caddy:
+    restart: always
+    container_name: caddy
+    image: abiosoft/caddy
+    ports:
+    - 80:80
+    - 443:443
+    environment:
+    - ACME_AGREE=true
+    - SITE_DOMAIN=${DOMAIN_NAME}
+    volumes:
+    - /etc/caddy:/etc
+    - /etc/ssl/certs:/etc/ssl/certs
+    - caddy_data:/.caddy
+
+  postgres:
+    restart: always
+    container_name: postgres
+    image: postgres:11
+    ports:
+    - 0.0.0.0:5432:5432
+    environment:
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - POSTGRES_DB=${POSTGRES_DB}
+    - POSTGRES_USER=${POSTGRES_USER}
+    volumes:
+    - pg_data:/var/lib/postgresql/data
+
+volumes:  
+  caddy_data:
+  media_data:
+  pg_data:

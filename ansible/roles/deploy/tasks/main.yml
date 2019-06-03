@@ -1,0 +1,10 @@
+- name: Add the user 'deploy'
+  user:
+    name: deploy
+    groups: docker
+- name: Set authorized key for user 'deploy'
+  authorized_key:
+    user: deploy
+    state: present
+    exclusive: true
+    key: '{{ lookup(''file'', ''files/ssh/id_rsa.pub'') }}'

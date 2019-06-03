@@ -1,0 +1,11 @@
+- hosts: all
+  user: root
+  become: yes
+  roles:
+  - docker
+
+- hosts: dev
+  user: root
+  become: yes
+  roles:
+  - deploy
