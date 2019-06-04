@@ -22,6 +22,17 @@ services:
          aliases:
          - backend
 
+  api:
+    restart: always
+    image: $DOCKER_API_IMAGE
+    env_file: .env
+    depends_on:
+     - postgres
+    networks:
+       default:
+         aliases:
+         - api
+
   caddy:
     restart: always
     container_name: caddy
@@ -50,7 +61,7 @@ services:
     volumes:
     - pg_data:/var/lib/postgresql/data
 
-volumes:  
+volumes:
   caddy_data:
   media_data:
   pg_data:

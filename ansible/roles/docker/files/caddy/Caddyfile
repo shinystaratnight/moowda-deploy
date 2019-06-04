@@ -1,9 +1,13 @@
 (static_cache) {
-	Cache-Control "max-age=86400"
+        Cache-Control "max-age=86400"
 }
 
 178.79.148.211:80 {
   tls tech@junte.it
+
+  proxy /api/ api:8080 {
+    transparent
+  }
 
   proxy /admin/ backend:8080 {
     transparent

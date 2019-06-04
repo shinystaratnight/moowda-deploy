@@ -8,6 +8,7 @@ docker login -u="$DOCKER_REGISTRY_USER" -p="$DOCKER_REGISTRY_PASSWORD" registry.
 
 docker-compose pull backend
 docker-compose pull frontend
+docker-compose pull api
 
 docker-compose up -d
 
