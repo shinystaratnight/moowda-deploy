@@ -1,0 +1,2 @@
+include snippets/proxy_params;
+proxy_pass http://frontend:8080;
