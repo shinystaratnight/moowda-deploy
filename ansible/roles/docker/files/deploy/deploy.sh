@@ -13,4 +13,4 @@ docker-compose pull api
 docker-compose up -d
 
 sleep 5
-docker restart caddy
+docker-compose restart nginx

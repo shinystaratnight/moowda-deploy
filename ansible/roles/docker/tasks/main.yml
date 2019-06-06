@@ -33,12 +33,12 @@
   with_items:
   - ["/opt/deploy/"]
 
-- name: Copy caddy
+- name: Copynig nginx
   copy:
-    src: files/caddy
+    src: files/nginx
     dest: /etc/
     mode: 0664
-  notify: reload caddy
+  notify: reload nginx
 
 - name: Copynig deploy script
   copy:

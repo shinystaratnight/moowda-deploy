@@ -1,4 +1,4 @@
-- name: reload caddy
+- name: reload nginx
   docker_container:
-    name: caddy
+    name: nginx
     restart: yes

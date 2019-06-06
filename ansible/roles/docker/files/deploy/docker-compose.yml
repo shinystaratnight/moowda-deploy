@@ -14,9 +14,9 @@ services:
     image: $DOCKER_BACKEND_IMAGE
     env_file: .env
     volumes:
-     - media_data:/var/www/run/media
+    - media_data:/var/www/run/media
     depends_on:
-     - postgres
+    - postgres
     networks:
        default:
          aliases:
@@ -27,26 +27,23 @@ services:
     image: $DOCKER_API_IMAGE
     env_file: .env
     depends_on:
-     - postgres
+    - postgres
+    volumes:
+    - ./static:/root/static
     networks:
        default:
          aliases:
          - api
 
-  caddy:
+  nginx:
     restart: always
-    container_name: caddy
-    image: abiosoft/caddy
+    image: nginx
     ports:
     - 80:80
     - 443:443
-    environment:
-    - ACME_AGREE=true
-    - SITE_DOMAIN=${DOMAIN_NAME}
     volumes:
-    - /etc/caddy:/etc
-    - /etc/ssl/certs:/etc/ssl/certs
-    - caddy_data:/.caddy
+    - /etc/nginx:/etc/nginx
+    - ./static:/var/www/static
 
   postgres:
     restart: always
